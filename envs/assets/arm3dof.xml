@@ -1,0 +1,53 @@
+<mujoco model="arm3dof_planar">
+  <!--
+    Minimal 3-DOF planar reaching arm.
+    Purpose: a fast, dependency-free testbed for Stage 1 (control-autonomy-level
+    and control-frequency sweeps). Swap this asset for a real manipulator model
+    (e.g. Franka Panda / UR5e from MuJoCo Menagerie) once the pipeline is validated
+    -- the env wrapper (arm_env.py) does not hardcode link count, so a 6-7 DOF
+    model drops in with only config changes (see configs/*.yaml: n_joints).
+  -->
+  <compiler angle="radian" inertiafromgeom="true"/>
+  <option timestep="0.002" gravity="0 0 -9.81" integrator="RK4"/>
+
+  <default>
+    <joint damping="0.15" armature="0.01" limited="true"/>
+    <geom rgba="0.2 0.6 0.8 1" contype="1" conaffinity="1"/>
+    <motor ctrllimited="true"/>
+  </default>
+
+  <worldbody>
+    <light diffuse="0.8 0.8 0.8" pos="0 0 3" dir="0 0 -1"/>
+    <geom name="floor" type="plane" size="2 2 0.1" rgba="0.9 0.9 0.9 1" pos="0 0 -0.05"/>
+
+    <body name="base" pos="0 0 0">
+      <geom type="cylinder" size="0.08 0.05" rgba="0.3 0.3 0.3 1"/>
+      <body name="link1" pos="0 0 0.05">
+        <joint name="joint1" type="hinge" axis="0 0 1" range="-3.14 3.14"/>
+        <geom type="capsule" fromto="0 0 0  0.3 0 0" size="0.03"/>
+        <body name="link2" pos="0.3 0 0">
+          <joint name="joint2" type="hinge" axis="0 0 1" range="-2.8 2.8"/>
+          <geom type="capsule" fromto="0 0 0  0.25 0 0" size="0.028"/>
+          <body name="link3" pos="0.25 0 0">
+            <joint name="joint3" type="hinge" axis="0 0 1" range="-2.8 2.8"/>
+            <geom type="capsule" fromto="0 0 0  0.18 0 0" size="0.024"/>
+            <site name="end_effector" pos="0.18 0 0" size="0.02" rgba="1 0 0 1"/>
+          </body>
+        </body>
+      </body>
+    </body>
+
+    <body name="target" pos="0.3 0.3 0.05" mocap="true">
+      <geom type="sphere" size="0.025" rgba="0 1 0 0.6" contype="0" conaffinity="0"/>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <!-- Torque-level actuators: the lowest common denominator. Higher-level
+         control (joint position, PWM) is implemented in Python on top of these,
+         so every autonomy level ultimately issues a torque command to MuJoCo. -->
+    <motor name="motor1" joint="joint1" ctrlrange="-15 15" gear="1"/>
+    <motor name="motor2" joint="joint2" ctrlrange="-10 10" gear="1"/>
+    <motor name="motor3" joint="joint3" ctrlrange="-6 6" gear="1"/>
+  </actuator>
+</mujoco>

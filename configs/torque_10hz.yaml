@@ -1,0 +1,20 @@
+env:
+  control_level: torque
+  control_hz: 10
+  physics_hz: 500
+  reward_dist_weight: 1.0
+  reward_effort_weight: 0.001
+  success_thresh: 0.03
+  max_episode_steps: 300
+train:
+  algo: PPO
+  total_timesteps: 20000
+  n_envs: 8
+  seed: 0
+  policy: MlpPolicy
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 256
+logging:
+  run_name: torque_10hz
+  log_dir: logs
