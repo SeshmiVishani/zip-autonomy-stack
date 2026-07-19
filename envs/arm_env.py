@@ -90,6 +90,7 @@ class ArmReachEnv(gym.Env):
         self._step_count = 0
         self.render_mode = render_mode
         self._viewer = None
+        self._renderer = None
 
         # Action space differs by autonomy level; observation space is fixed.
         if control_level == "torque":
@@ -202,7 +203,7 @@ class ArmReachEnv(gym.Env):
     def render(self):
         if self.render_mode != "rgb_array":
             return None
-        if self._viewer is None:
+        if self._renderer is None:
             self._renderer = mujoco.Renderer(self.model, height=480, width=480)
         self._renderer.update_scene(self.data)
         return self._renderer.render()
