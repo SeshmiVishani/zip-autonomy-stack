@@ -95,7 +95,7 @@ def main():
 
     try:
         imageio.mimsave(args.output, frames, fps=args.fps, codec="libx264",
-                         quality=8, macro_block_size=1)
+                         quality=8)
         print(f"[record_demo] wrote {args.output}")
     except Exception as e:
         gif_path = os.path.splitext(args.output)[0] + ".gif"
